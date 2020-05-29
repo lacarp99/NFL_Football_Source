@@ -3,48 +3,83 @@
 #include <iostream>
 #include <random>
 #include <time.h>
+#include <fstream>
 
 using namespace std;
 
 int chosenTeam = 0;
 int skill = NULL;
 
+char createOrSignin;
+
+string appdata;
+string username;
+string password;
+
 struct newcoach {
 	string firstname;
 	string lastname;
 } coach;
 
-int pointGuard;
-int shootingGuard;
-int smallForward;
-int powerForward;
-int center;
-int pointGuardskill;
-int shootingGuardskill;
-int smallForwardskill;
-int powerForwardskill;
-int centerSkill;
+struct newTeam {
+	int quarterback;
+	int runningback;
+	int wideReceiver;
+	int tightEnd;
+	int lineBacker;
+	int offensiveLineman;
+	int defensiveLineman;
+	int cornerBack;
+	int safety;
+	int quarterbackskill;
+	int runningbackskill;
+	int wideReceiverskill;
+	int tightEndskill;
+	int lineBackerskill;
+	int offensiveLinemanskill;
+	int defensiveLinemanskill;
+	int cornerBackskill;
+	int safetyskill;
+} team;
 
 //Teams Names
-const char* teams[14] = {
-	"Michigan",
-	"Michigan State",
-	"Ohio State",
-	"Maryland",
-	"Wisconsin",
-	"Illinois",
-	"Penn State",
-	"Iowa",
-	"Rutgers",
-	"Indiana",
-	"Purdue",
-	"Minnesota",
-	"Northwestern",
-	"Nebraska"
+const char* teams[] = {
+	"Arizona Cardinals",
+	"Atlanta Falcons",
+	"Baltimore Ravens",
+	"Buffalo Bills",
+	"Carolina Panthers",
+	"Chicago Bears",
+	"Cincinnati Bengals",
+	"Cleveland Browns",
+	"Dallas Cowboys",
+	"Denver Broncos",
+	"Detroit Lions",
+	"Green Bay Packers",
+	"Houston Texans",
+	"Indianapolis Colts",
+	"Jacksonville Jaguars",
+	"Kansas City Chiefs",
+	"Los Angeles Chargers",
+	"Los Angeles Rams",
+	"Miami Dolphins",
+	"Minnesota Vikings",
+	"New England Patriots",
+	"New Orleans Saints",
+	"New York Giants",
+	"New York Jets",
+	"Oakland Raiders",
+	"Philadelphia Eagles",
+	"Pittsburgh Steelers",
+	"San Francisco 49ers",
+	"Seattle Seahawks",
+	"Tampa Bay Buccaneers",
+	"Tennessee Titans",
+	"Washington Redskins",
 };
 
 //Possible Player Names
-const string names[100] = {
+const string names[] = {
 	"Smith"
 	,"Johnson"
 	,"Williams"
@@ -147,12 +182,30 @@ const string names[100] = {
 	,"Hayes"
 };
 
+int truRand(int max) {
+	srand(time(NULL));
+	return rand()*rand() % max;
+}
+
 int main(int nNumberofArgs, char* pszArgs[])
 {
 	//Setup
 	srand(time(NULL));
+	fstream file("C:\\Users\\Public\\NFL_Football\\saveGame.txt");
+	cout << "Sign in to your account or create a new one. [S/N]: " << endl;
+	cin >> createOrSignin;
+	if (createOrSignin == 'S') {
+		cin >> username;
+		cin >> password;
+		//check to see if they match any in the document.
+	} else if (createOrSignin == 'N') {
+		cin >> username;
+		cin >> password;
+		//write these to a document.
+	}
+
 	//Welcome Player
-	cout << "Welcome to Big 10 College Basketball! Select a team from the following list:" << endl;
+	cout << "Welcome to NFL Football! Select a team from the following list:" << endl;
 	for (int i = 0; teams[i] != NULL; i++) {
 		cout << i + 1 << ". " << teams[i] << endl;
 	}
@@ -165,13 +218,18 @@ int main(int nNumberofArgs, char* pszArgs[])
 	cout << "Coach: ";
 	cin >> coach.firstname;
 	cin >> coach.lastname;
-	cout << "Welcome Coach " << coach.lastname << " we're glad to have you here at " << teams[chosenTeam - 1] << endl;
+	cout << "Welcome Coach " << coach.lastname << " we're glad to have you here with the " << teams[chosenTeam - 1] << endl;
 	//Create team and save random names
-	pointGuardskill = rand() % 3;
-	shootingGuardskill = rand() % 3;
-	smallForwardskill = rand() % 3;
-	powerForwardskill = rand() % 3;
-	centerSkill = rand() % 3;
+	team.quarterbackskill = truRand(3);
+	team.runningbackskill = truRand(3);
+	team.wideReceiverskill = truRand(3);
+	team.tightEndskill = truRand(3);
+	team.offensiveLinemanskill = truRand(3);
+	team.lineBackerskill = truRand(3);
+	team.defensiveLinemanskill = truRand(3);
+	team.cornerBackskill = truRand(3);
+	team.safetyskill = truRand(3);
+	cout << team.safetyskill << endl;
 	cout << names[rand() % 99] << endl;
 	return 0;
 }
