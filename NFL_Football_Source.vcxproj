@@ -141,6 +141,19 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="readfromfile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="personNames.txt" />
+    <Text Include="slot1ints.txt" />
+    <Text Include="slot1strings.txt" />
+    <Text Include="passwords.txt" />
+    <Text Include="slot2ints.txt" />
+    <Text Include="slot2strings.txt" />
+    <Text Include="slot3ints.txt" />
+    <Text Include="slot3strings.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

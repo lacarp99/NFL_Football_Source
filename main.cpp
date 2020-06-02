@@ -4,15 +4,18 @@
 #include <random>
 #include <time.h>
 #include <fstream>
+#include "readfromfile.h"
 
 using namespace std;
 
 int chosenTeam = 0;
 int skill = NULL;
+int slot;
+int access = 1;
+int tries = 3;
 
 char createOrSignin;
 
-string appdata;
 string username;
 string password;
 
@@ -79,108 +82,7 @@ const char* teams[] = {
 };
 
 //Possible Player Names
-const string names[] = {
-	"Smith"
-	,"Johnson"
-	,"Williams"
-	,"Jones"
-	,"Brown"
-	,"Davis"
-	,"Miller"
-	,"Wilson"
-	,"Moore"
-	,"Taylor"
-	,"Anderson"
-	,"Thomas"
-	,"Jackson"
-	,"White"
-	,"Harris"
-	,"Martin"
-	,"Thompson"
-	,"Garcia"
-	,"Martinez"
-	,"Robinson"
-	,"Clark"
-	,"Rodriguez"
-	,"Lewis"
-	,"Lee"
-	,"Walker"
-	,"Hall"
-	,"Allen"
-	,"Young"
-	,"Hernandez"
-	,"King"
-	,"Wright"
-	,"Lopez"
-	,"Hill"
-	,"Scott"
-	,"Green"
-	,"Adams"
-	,"Baker"
-	,"Gonzalez"
-	,"Nelson"
-	,"Carter"
-	,"Mitchell"
-	,"Perez"
-	,"Roberts"
-	,"Turner"
-	,"Phillips"
-	,"Campbell"
-	,"Parker"
-	,"Evans"
-	,"Edwards"
-	,"Collins"
-	,"Stewart"
-	,"Sanchez"
-	,"Morris"
-	,"Rogers"
-	,"Reed"
-	,"Cook"
-	,"Morgan"
-	,"Bell"
-	,"Murphy"
-	,"Bailey"
-	,"Rivera"
-	,"Cooper"
-	,"Richardson"
-	,"Cox"
-	,"Howard"
-	,"Ward"
-	,"Torres"
-	,"Peterson"
-	,"Gray"
-	,"Ramirez"
-	,"James"
-	,"Watson"
-	,"Brooks"
-	,"Kelly"
-	,"Sanders"
-	,"Price"
-	,"Bennett"
-	,"Wood"
-	,"Barnes"
-	,"Ross"
-	,"Henderson"
-	,"Coleman"
-	,"Jenkins"
-	,"Perry"
-	,"Powell"
-	,"Long"
-	,"Patterson"
-	,"Hughes"
-	,"Flores"
-	,"Washington"
-	,"Butler"
-	,"Simmons"
-	,"Foster"
-	,"Gonzales"
-	,"Bryant"
-	,"Alexander"
-	,"Russell"
-	,"Griffin"
-	,"Diaz"
-	,"Hayes"
-};
+std::vector< string > names;
 
 int truRand(int max) {
 	srand(time(NULL));
@@ -191,17 +93,45 @@ int main(int nNumberofArgs, char* pszArgs[])
 {
 	//Setup
 	srand(time(NULL));
-	fstream file("C:\\Users\\Public\\NFL_Football\\saveGame.txt");
-	cout << "Sign in to your account or create a new one. [S/N]: " << endl;
-	cin >> createOrSignin;
-	if (createOrSignin == 'S') {
-		cin >> username;
-		cin >> password;
-		//check to see if they match any in the document.
-	} else if (createOrSignin == 'N') {
-		cin >> username;
-		cin >> password;
-		//write these to a document.
+	while (access != 2) {
+		if (access == 1 && tries >= 3) {
+			cout << "Sign in to your account or create a new one. [S/N]: " << endl;
+			cin >> createOrSignin;
+			cout << "What slot would you like to use? 1-3: ";
+			cin >> slot;
+			access = 1;
+			tries = 0;
+		}
+		if (((createOrSignin == 'S' || createOrSignin == 's') && access == 1) && tries <= 3) {
+			cout << "Password: ";
+			cin >> password;
+			if (getStrings((string)"passwords.txt")[slot - 1] == password) {
+				cout << "Access granted." << endl;
+				access = 2;
+			}
+			else {
+				cout << "Access denied." << endl;
+				access = 1;
+				tries++;
+			}
+		}
+		else if (createOrSignin == 'N' || createOrSignin == 'n') {
+			cout << "WARNING! Any data that was on this slot will be removed. Be sure this is the correct slot before creating a new password and team." << endl;
+			cout << "What would you like the password to be? ";
+			cin >> password;
+			switch (slot)
+			{
+			case 1:
+				writeStrings((string)"passwords.txt", vector< string > { password, getStrings((string)"passwords.txt")[1], getStrings((string)"passwords.txt")[2] }, 3);
+				break;
+			case 2:
+				writeStrings((string)"passwords.txt", vector< string > { getStrings((string)"passwords.txt")[0], password, getStrings((string)"passwords.txt")[2] }, 3);
+				break;
+			case 3:
+				writeStrings((string)"passwords.txt", vector< string > { getStrings((string)"passwords.txt")[1], getStrings((string)"passwords.txt")[2], password }, 3);
+				break;
+			}
+		}
 	}
 
 	//Welcome Player
@@ -220,6 +150,10 @@ int main(int nNumberofArgs, char* pszArgs[])
 	cin >> coach.lastname;
 	cout << "Welcome Coach " << coach.lastname << " we're glad to have you here with the " << teams[chosenTeam - 1] << endl;
 	//Create team and save random names
+	for (int i = 0; i < 100; i++) {
+		names.push_back(getStrings((string)"personNames.txt")[i]);
+	}
+
 	team.quarterbackskill = truRand(3);
 	team.runningbackskill = truRand(3);
 	team.wideReceiverskill = truRand(3);

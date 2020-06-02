@@ -19,4 +19,19 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="readfromfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="slot1ints.txt" />
+    <Text Include="slot1strings.txt" />
+    <Text Include="passwords.txt" />
+    <Text Include="slot2ints.txt" />
+    <Text Include="slot2strings.txt" />
+    <Text Include="slot3ints.txt" />
+    <Text Include="slot3strings.txt" />
+    <Text Include="personNames.txt" />
+  </ItemGroup>
 </Project>
