@@ -89,6 +89,26 @@ int truRand(int max) {
 	return rand()*rand() % max;
 }
 
+string encrypt(string input) {
+	string output;
+	const char* password = input.c_str();
+	for (int i = 0; password[i] != NULL; i++) {
+		output.push_back((char)((int)password[i] + 3));
+	}
+
+	return output;
+}
+
+string decrypt(string input) {
+	string output;
+	const char* password = input.c_str();
+	for (int i = 0; password[i] != NULL; i++) {
+		output.push_back((char)((int)password[i] - 3));
+	}
+
+	return output;
+}
+
 int main(int nNumberofArgs, char* pszArgs[])
 {
 	//Setup
@@ -105,7 +125,7 @@ int main(int nNumberofArgs, char* pszArgs[])
 		if (((createOrSignin == 'S' || createOrSignin == 's') && access == 1) && tries <= 3) {
 			cout << "Password: ";
 			cin >> password;
-			if (getStrings((string)"passwords.txt")[slot - 1] == password) {
+			if (decrypt(getStrings((string)"Save Data\\passwords.txt")[slot - 1]) == password) {
 				cout << "Access granted." << endl;
 				access = 2;
 			}
@@ -116,19 +136,20 @@ int main(int nNumberofArgs, char* pszArgs[])
 			}
 		}
 		else if (createOrSignin == 'N' || createOrSignin == 'n') {
+			access = 2;
 			cout << "WARNING! Any data that was on this slot will be removed. Be sure this is the correct slot before creating a new password and team." << endl;
 			cout << "What would you like the password to be? ";
 			cin >> password;
 			switch (slot)
 			{
 			case 1:
-				writeStrings((string)"passwords.txt", vector< string > { password, getStrings((string)"passwords.txt")[1], getStrings((string)"passwords.txt")[2] }, 3);
+				writeStrings((string)"Save Data\\passwords.txt", vector< string > { encrypt(password), getStrings((string)"Save Data\\passwords.txt")[1], getStrings((string)"Save Data\\passwords.txt")[2] }, 3);
 				break;
 			case 2:
-				writeStrings((string)"passwords.txt", vector< string > { getStrings((string)"passwords.txt")[0], password, getStrings((string)"passwords.txt")[2] }, 3);
+				writeStrings((string)"Save Data\\passwords.txt", vector< string > { getStrings((string)"Save Data\\passwords.txt")[0], encrypt(password), getStrings((string)"Save Data\\passwords.txt")[2] }, 3);
 				break;
 			case 3:
-				writeStrings((string)"passwords.txt", vector< string > { getStrings((string)"passwords.txt")[1], getStrings((string)"passwords.txt")[2], password }, 3);
+				writeStrings((string)"Save Data\\passwords.txt", vector< string > { getStrings((string)"Save Data\\passwords.txt")[1], getStrings((string)"Save Data\\passwords.txt")[2], encrypt(password) }, 3);
 				break;
 			}
 		}
@@ -151,7 +172,7 @@ int main(int nNumberofArgs, char* pszArgs[])
 	cout << "Welcome Coach " << coach.lastname << " we're glad to have you here with the " << teams[chosenTeam - 1] << endl;
 	//Create team and save random names
 	for (int i = 0; i < 100; i++) {
-		names.push_back(getStrings((string)"personNames.txt")[i]);
+		names.push_back(getStrings((string)"Save Data\\personNames.txt")[i]);
 	}
 
 	team.quarterbackskill = truRand(3);
