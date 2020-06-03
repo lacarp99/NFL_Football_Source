@@ -16,7 +16,7 @@ int tries = 3;
 
 char createOrSignin;
 
-string username;
+string appdatapath;
 string password;
 
 struct newcoach {
@@ -25,15 +25,16 @@ struct newcoach {
 } coach;
 
 struct newTeam {
-	int quarterback;
-	int runningback;
-	int wideReceiver;
-	int tightEnd;
-	int lineBacker;
-	int offensiveLineman;
-	int defensiveLineman;
-	int cornerBack;
-	int safety;
+	string quarterback;
+	string runningback;
+	string wideReceiver;
+	string tightEnd;
+	string lineBacker;
+	string offensiveLineman;
+	string defensiveLineman;
+	string cornerBack;
+	string safety;
+
 	int quarterbackskill;
 	int runningbackskill;
 	int wideReceiverskill;
@@ -84,11 +85,6 @@ const char* teams[] = {
 //Possible Player Names
 std::vector< string > names;
 
-int truRand(int max) {
-	srand(time(NULL));
-	return rand()*rand() % max;
-}
-
 string encrypt(string input) {
 	string output;
 	const char* password = input.c_str();
@@ -112,8 +108,10 @@ string decrypt(string input) {
 int main(int nNumberofArgs, char* pszArgs[])
 {
 	//Setup
+	appdatapath = appData()+"NFL_Football\\";
+	cout << appdatapath << endl;
 	srand(time(NULL));
-	while (access != 2) {
+	while (access != 2 && access != 4) {
 		if (access == 1 && tries >= 3) {
 			cout << "Sign in to your account or create a new one. [S/N]: " << endl;
 			cin >> createOrSignin;
@@ -125,7 +123,7 @@ int main(int nNumberofArgs, char* pszArgs[])
 		if (((createOrSignin == 'S' || createOrSignin == 's') && access == 1) && tries <= 3) {
 			cout << "Password: ";
 			cin >> password;
-			if (decrypt(getStrings((string)"Save Data\\passwords.txt")[slot - 1]) == password) {
+			if (decrypt(getStrings(appdatapath+"passwords.txt")[slot - 1]) == password) {
 				cout << "Access granted." << endl;
 				access = 2;
 			}
@@ -136,55 +134,91 @@ int main(int nNumberofArgs, char* pszArgs[])
 			}
 		}
 		else if (createOrSignin == 'N' || createOrSignin == 'n') {
-			access = 2;
+			access = 4;
 			cout << "WARNING! Any data that was on this slot will be removed. Be sure this is the correct slot before creating a new password and team." << endl;
 			cout << "What would you like the password to be? ";
 			cin >> password;
 			switch (slot)
 			{
 			case 1:
-				writeStrings((string)"Save Data\\passwords.txt", vector< string > { encrypt(password), getStrings((string)"Save Data\\passwords.txt")[1], getStrings((string)"Save Data\\passwords.txt")[2] }, 3);
+				writeStrings(appdatapath+"passwords.txt", vector< string > { encrypt(password), getStrings(appdatapath+"passwords.txt")[1], getStrings(appdatapath+"passwords.txt")[2] }, 3);
 				break;
 			case 2:
-				writeStrings((string)"Save Data\\passwords.txt", vector< string > { getStrings((string)"Save Data\\passwords.txt")[0], encrypt(password), getStrings((string)"Save Data\\passwords.txt")[2] }, 3);
+				writeStrings(appdatapath+"passwords.txt", vector< string > { getStrings(appdatapath+"passwords.txt")[0], encrypt(password), getStrings(appdatapath+"passwords.txt")[2] }, 3);
 				break;
 			case 3:
-				writeStrings((string)"Save Data\\passwords.txt", vector< string > { getStrings((string)"Save Data\\passwords.txt")[1], getStrings((string)"Save Data\\passwords.txt")[2], encrypt(password) }, 3);
+				writeStrings(appdatapath+"passwords.txt", vector< string > { getStrings(appdatapath+"passwords.txt")[1], getStrings(appdatapath+"passwords.txt")[2], encrypt(password) }, 3);
 				break;
 			}
 		}
 	}
 
-	//Welcome Player
-	cout << "Welcome to NFL Football! Select a team from the following list:" << endl;
-	for (int i = 0; teams[i] != NULL; i++) {
-		cout << i + 1 << ". " << teams[i] << endl;
-	}
-	//Get player's team of choice
-	cout << endl << "Type the number of the team you would like to play as: ";
-	cin >> chosenTeam;
-	cout << "You chose: " << teams[chosenTeam - 1] << endl;
-	//Get name of player (coach)
-	cout << "What is the name of your coach?" << endl;
-	cout << "Coach: ";
-	cin >> coach.firstname;
-	cin >> coach.lastname;
-	cout << "Welcome Coach " << coach.lastname << " we're glad to have you here with the " << teams[chosenTeam - 1] << endl;
-	//Create team and save random names
-	for (int i = 0; i < 100; i++) {
-		names.push_back(getStrings((string)"Save Data\\personNames.txt")[i]);
-	}
+	if (access == 4) {
+		//Welcome Player
+		cout << "Welcome to NFL Football! Select a team from the following list:" << endl;
+		for (int i = 0; teams[i] != NULL; i++) {
+			cout << i + 1 << ". " << teams[i] << endl;
+		}
+		//Get player's team of choice
+		cout << endl << "Type the number of the team you would like to play as: ";
+		cin >> chosenTeam;
+		cout << "You chose: " << teams[chosenTeam - 1] << endl;
+		//Get name of player (coach)
+		cout << "What is the name of your coach?" << endl;
+		cout << "Coach: ";
+		cin >> coach.firstname;
+		cin >> coach.lastname;
+		cout << "Welcome Coach " << coach.lastname << " we're glad to have you here with the " << teams[chosenTeam - 1] << endl;
+		//Create team and save random names
+		for (int i = 0; i < 100; i++) {
+			names.push_back(getStrings(appdatapath + "personNames.txt")[i]);
+		}
 
-	team.quarterbackskill = truRand(3);
-	team.runningbackskill = truRand(3);
-	team.wideReceiverskill = truRand(3);
-	team.tightEndskill = truRand(3);
-	team.offensiveLinemanskill = truRand(3);
-	team.lineBackerskill = truRand(3);
-	team.defensiveLinemanskill = truRand(3);
-	team.cornerBackskill = truRand(3);
-	team.safetyskill = truRand(3);
-	cout << team.safetyskill << endl;
-	cout << names[rand() % 99] << endl;
+		team.quarterbackskill = rand() % 3;
+		srand(time(NULL));
+		team.runningbackskill = rand() % 3;
+		srand(time(NULL));
+		team.wideReceiverskill = rand() % 3;
+		srand(time(NULL));
+		team.tightEndskill = rand() % 3;
+		srand(time(NULL));
+		team.offensiveLinemanskill = rand() % 3;
+		srand(time(NULL));
+		team.lineBackerskill = rand() % 3;
+		srand(time(NULL));
+		team.defensiveLinemanskill = rand() % 3;
+		srand(time(NULL));
+		team.cornerBackskill = rand() % 3;
+		srand(time(NULL));
+		team.safetyskill = rand() % 3;
+		srand(time(NULL));
+		team.quarterback = names[ rand() % 99];
+		srand(time(NULL));
+		team.runningback = names[ rand() % 99];
+		srand(time(NULL));
+		team.wideReceiver = names[ rand() % 99];
+		srand(time(NULL));
+		team.tightEnd = names[ rand() % 99];
+		srand(time(NULL));
+		team.offensiveLineman = names[ rand() % 99];
+		srand(time(NULL));
+		team.lineBacker = names[ rand() % 99];
+		srand(time(NULL));
+		team.defensiveLineman = names[ rand() % 99];
+		srand(time(NULL));
+		team.cornerBack = names[ rand() % 99];
+		srand(time(NULL));
+		team.safety = names[ rand() % 99];
+		cout << "QB " << team.quarterback << " : " << team.quarterbackskill << endl;
+		cout << "RB " << team.runningback << " : " << team.runningbackskill << endl;
+		cout << "WR " << team.wideReceiver << " : " << team.wideReceiverskill << endl;
+		cout << "TE " << team.tightEnd << " : " << team.tightEndskill << endl;
+		cout << "OL " << team.offensiveLineman << " : " << team.offensiveLinemanskill << endl;
+		cout << "LB " << team.lineBacker << " : " << team.lineBackerskill << endl;
+		cout << "DL " << team.defensiveLineman << " : " << team.defensiveLinemanskill << endl;
+		cout << "CB " << team.cornerBack << " : " << team.cornerBackskill << endl;
+		cout << "S " << team.safety << " : " << team.safetyskill << endl;
+	}
+	//start game normally
 	return 0;
 }
